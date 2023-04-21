@@ -116,7 +116,9 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 		String login = request.getParameter("login");
 		String senha = request.getParameter("senha");
 		String perfil = request.getParameter("perfil");
-	
+		String sexo = request.getParameter("sexo");
+		
+		
 		ModelLogin modelLogin = new ModelLogin();
 		modelLogin.setId(id !=null && !id.isEmpty() ? Long.parseLong(id) : null);
 		modelLogin.setNome(nome);
@@ -124,6 +126,7 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 		modelLogin.setLogin(login);
 		modelLogin.setSenha(senha);
 		modelLogin.setPerfil(perfil);
+		modelLogin.setSexo(sexo);
 		
 		if (daoUsuarioRepository.validarLogin(modelLogin.getLogin()) && modelLogin.getId() == null) {
 			msg = "já exite usuário com o mesmo login, Por favor informe outro Login";

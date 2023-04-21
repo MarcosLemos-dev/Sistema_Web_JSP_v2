@@ -18,14 +18,14 @@ public class DAOUsuarioRepository {
 		// TODO Auto-generated constructor stub
 		connection = SingleConnectionBanco.getConnection();
 	}
-	public ModelLogin gravarUsuario(ModelLogin objeto, Long userlogado) throws SQLException {
+	public ModelLogin gravarUsuario(ModelLogin objeto, Long userlogado) throws Exception {
 		
 		
 			
 			if (objeto.isNovo()) {
 				
 			
-		String sql = "INSERT INTO public.model_login( login, senha, nome, email, usuario_id, perfil)	VALUES (?, ?, ?, ?, ?, ?); " ;
+		String sql = "INSERT INTO public.model_login( login, senha, nome, email, usuario_id, perfil, sexo)	VALUES (?, ?, ?, ?, ?, ?, ?); " ;
 		PreparedStatement preparedSQL = connection.prepareStatement(sql);
 		
 		preparedSQL.setString(1, objeto.getLogin()); // captura o objeto
@@ -34,11 +34,12 @@ public class DAOUsuarioRepository {
 		preparedSQL.setString(4, objeto.getEmail());
 		preparedSQL.setLong(5, userlogado);
 		preparedSQL.setString(6, objeto.getPerfil());
+		preparedSQL.setString(7, objeto.getSexo());
 		
 		preparedSQL.execute();
 		connection.commit();
 			}else {
-				String sql = "UPDATE public.model_login SET login=?, senha=?, nome=?, email=?, perfil=?	WHERE id = "+objeto.getId()+" ; " ;
+				String sql = "UPDATE public.model_login SET login=?, senha=?, nome=?, email=?, perfil=?, sexo=?	WHERE id = "+objeto.getId()+" ; " ;
 				PreparedStatement prepareSQL = connection.prepareStatement(sql);
 				
 				prepareSQL.setString(1, objeto.getLogin()); // captura o objeto
@@ -46,6 +47,7 @@ public class DAOUsuarioRepository {
 				prepareSQL.setString(3, objeto.getNome());
 				prepareSQL.setString(4, objeto.getEmail());
 				prepareSQL.setString(5, objeto.getPerfil());
+				prepareSQL.setString(6, objeto.getSexo());
 				
 				prepareSQL.executeUpdate();
 				connection.commit();
@@ -74,6 +76,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setNome(resultado.getString("nome"));// ESSAs são as colunas do BD
 			//modelLogin.setEmail(resultado.getString("email"));// ESSAs são as colunas do BD
 			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			
 			retorno.add(modelLogin);
 		}
 		return retorno;
@@ -98,6 +102,8 @@ public class DAOUsuarioRepository {
 			modelLogin.setNome(resultado.getString("nome"));// ESSAs são as colunas do BD
 			modelLogin.setUseadmin(resultado.getBoolean("useadmin"));// ESSAs são as colunas do BD
 			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			
 			retorno.add(modelLogin);
 		}
 		return retorno;
@@ -105,7 +111,7 @@ public class DAOUsuarioRepository {
 		
 	}
 	
-public ModelLogin consultarUsuarioLogado(String login) throws SQLException {
+public ModelLogin consultarUsuarioLogado(String login) throws Exception {
 		
 		ModelLogin modelLogin = new ModelLogin();
 		
@@ -122,12 +128,14 @@ public ModelLogin consultarUsuarioLogado(String login) throws SQLException {
 			modelLogin.setSenha(resultado.getString("senha"));
 			modelLogin.setUseadmin(resultado.getBoolean("useadmin"));
 			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			
 		} 
 		
 		return modelLogin;
 	}
 	
-public ModelLogin consultarUsuario(String login) throws SQLException {
+public ModelLogin consultarUsuario(String login) throws Exception {
 		
 		ModelLogin modelLogin = new ModelLogin();
 		
@@ -143,12 +151,13 @@ public ModelLogin consultarUsuario(String login) throws SQLException {
 			modelLogin.setNome(resultado.getString("nome"));
 			modelLogin.setSenha(resultado.getString("senha"));
 			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
 			
 		} 
 		
 		return modelLogin;
 	}
-	public ModelLogin consultarUsuario(String login, Long userlogado) throws SQLException {
+	public ModelLogin consultarUsuario(String login, Long userlogado) throws Exception {
 		
 		ModelLogin modelLogin = new ModelLogin();
 		
@@ -164,13 +173,14 @@ public ModelLogin consultarUsuario(String login) throws SQLException {
 			modelLogin.setNome(resultado.getString("nome"));
 			modelLogin.setSenha(resultado.getString("senha"));
 			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
 			
 		} 
 		
 		return modelLogin;
 	}
 	
-public ModelLogin consultarUsuarioID(String id, Long userLogado) throws SQLException {
+public ModelLogin consultarUsuarioID(String id, Long userLogado) throws Exception {
 		
 		ModelLogin modelLogin = new ModelLogin();
 		
@@ -188,13 +198,14 @@ public ModelLogin consultarUsuarioID(String id, Long userLogado) throws SQLExcep
 			modelLogin.setNome(resultado.getString("nome"));
 			modelLogin.setSenha(resultado.getString("senha"));
 			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
 			
 		} 
 		
 		return modelLogin;
 	}
 	
-	public boolean validarLogin(String login) throws SQLException {
+	public boolean validarLogin(String login) throws Exception {
 	String sql = "select count(1) > 0 as existe from model_login where upper(login) = upper('"+login+"')";
 	PreparedStatement statement = connection.prepareStatement(sql);
 	
