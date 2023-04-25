@@ -7,14 +7,20 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dao.DAOUsuarioRepository;
+
 import model.ModelLogin;
+
 
 
 @MultipartConfig
@@ -120,6 +126,7 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 		String sexo = request.getParameter("sexo");
 		
 		
+		
 		ModelLogin modelLogin = new ModelLogin();
 		modelLogin.setId(id !=null && !id.isEmpty() ? Long.parseLong(id) : null);
 		modelLogin.setNome(nome);
@@ -128,6 +135,26 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 		modelLogin.setSenha(senha);
 		modelLogin.setPerfil(perfil);
 		modelLogin.setSexo(sexo);
+		
+		
+		if (ServletFileUpload.isMultipartContent(request)) {
+			Part part = request.getPart("filefoto");
+			
+			  if (part.getSize() > 0) {
+				  
+				  byte[] foto =  IOUtils.toByteArray(part.getInputStream());
+				  String imagembase64 = "data:image/" + part.getContentType().split("\\/")[1] + ";base64," + new Base64().encodeBase64String(foto);
+			  
+				  modelLogin.setFotouser(imagembase64);
+				  modelLogin.setExtensaofotouser(part.getContentType().split("\\/")[1]); 
+			  
+			}
+			  
+		 
+		  
+		}	
+		
+			 
 		
 		if (daoUsuarioRepository.validarLogin(modelLogin.getLogin()) && modelLogin.getId() == null) {
 			msg = "já exite usuário com o mesmo login, Por favor informe outro Login";

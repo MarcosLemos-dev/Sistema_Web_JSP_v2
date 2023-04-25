@@ -49,7 +49,7 @@
                                     						  
                                                             
                                                            
-                                                            <form class="form-material" enctype="multipart/form-date" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser">
+                                                            <form class="form-material"  enctype="multipart/form-data" action="<%= request.getContextPath()%>/ServletUsuarioController" method="post" id="formUser">
                                                            
                                                             <input type="hidden" name="acao" id="acao" value="" >
                                                            
@@ -61,9 +61,15 @@
                                                             
                                                               <div class="form-group form-default input-group mb-4 " >
                                                             <div class="input-group-prepend">
-                                                            <img alt="Imagem User" src="" width="700px">
+                                                            <c:if test="${modelLogin.fotouser !='' && modelLogin.fotouser !=null }">
+                                                            <img alt="Imagem User" id="fotoembase64" src="${modelLogin.fotouser}" width="70px">
+                                                           
+                                                            </c:if>
+                                                                <c:if test="${modelLogin.fotouser =='' || modelLogin.fotouser ==null}">
+                                                             <img alt="Imagem User" id="fotoembase64" src="assets/images/download.png" width="70px">
+                                                           </c:if>
                                                             </div>
-                                                          <input type="file" class="from-control-file" style="margin-top: 15px; margin-left: 5px;">
+                                                          <input type="file" id="filefoto" name="filefoto" accept="image/*" onchange="visualizarImg('fotoembase64', 'filefoto');" class="from-control-file" style="margin-top: 15px; margin-left: 5px;">
                                                             
                                                             </div>
                                                             
@@ -255,6 +261,34 @@
     <jsp:include page="javascriptfile.jsp"></jsp:include>
     
     <script type="text/javascript">
+    
+    function visualizarImg(fotoembase64, filefoto) {
+    	
+    	
+    	
+    	var preview = document.getElementById(fotoembase64); // campo IMG html
+    	var fileUser = document.getElementById(filefoto).files[0]; // pegando a imagem do usuario, pegano um unico file da imagem
+    	var reader = new FileReader();
+    	
+    	
+    	reader.onloadend = function (){
+    		
+    		preview.src =reader.result; /* carrega a foto na tela*/
+    	
+    	};
+    	
+    	if (fileUser){
+        	reader.readAsDataURL(fileUser);// preview da imagem
+        	alert('Carregada a imagem');
+        	
+        	}else{
+        	preview.src = '';
+        	alert('nao Carregada a imagem');
+        	}
+    	
+    	
+    	    
+	}
     
     function verEditar(id) {
     	
