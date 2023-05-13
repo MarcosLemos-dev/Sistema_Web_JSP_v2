@@ -103,7 +103,7 @@ public class DAOUsuarioRepository {
 	public List<ModelLogin> consultaUsuarioList(String nome, Long userLogado) throws Exception{
 		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
 		
-		String sql = "select * from model_login where upper(nome) like upper(?) and useadmin is false and usuario_id = ? " ;
+		String sql = "select * from model_login where upper(nome) like upper(?) and useadmin is false and usuario_id = ? limit 5 " ;
 		PreparedStatement statement = connection.prepareStatement(sql);
 		statement.setString(1, "%" + nome + "%");
 		statement.setLong(2, userLogado);
@@ -127,11 +127,55 @@ public class DAOUsuarioRepository {
 		
 		
 	}
+	public List<ModelLogin> consultaUsuarioListpaginada(Long userLogado, Integer offset) throws Exception{
+		
+		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
+		
+		String sql = "select * from model_login where useadmin is false and usuario_id = " + userLogado + " order by nome offset " +  offset + " limit 5 ";
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		ResultSet resultado = statement.executeQuery();
+		while(resultado.next()) {/*percorrer as linhas de resultado do SQL*/
+			
+			ModelLogin modelLogin = new ModelLogin();
+			
+			modelLogin.setEmail(resultado.getString("email"));// ESSAs são as colunas do BD
+			modelLogin.setId(resultado.getLong("id"));// ESSAs são as colunas do BD
+			modelLogin.setLogin(resultado.getString("login"));// ESSAs são as colunas do BD
+			modelLogin.setNome(resultado.getString("nome"));// ESSAs são as colunas do BD
+			//modelLogin.setUseadmin(resultado.getBoolean("useadmin"));// ESSAs são as colunas do BD
+			modelLogin.setPerfil(resultado.getString("perfil"));
+			modelLogin.setSexo(resultado.getString("sexo"));
+			
+			retorno.add(modelLogin);
+		}
+		return retorno;
+		
+		
+	}
+	public int totalPagina(Long userLogado) throws Exception {
+		String sql = "select count(1) as total from model_login where usuario_id = " + userLogado;
+		PreparedStatement statement = connection.prepareStatement(sql);
+		
+		ResultSet resultado = statement.executeQuery();
+		
+		resultado.next();
+		
+		Double cadastros = resultado.getDouble("total");
+		Double porpagina = 5.0;
+		Double pagina = cadastros / porpagina;
+		Double resto = pagina % 2;
+		if (resto > 0 ) {
+			pagina ++;
+		}
+	return pagina.intValue();
+	}
 	
 	public List<ModelLogin> consultaUsuarioList(Long userLogado) throws Exception{
 		List<ModelLogin> retorno = new ArrayList<ModelLogin>();
 		
-		String sql = "select * from model_login where useadmin is false and usuario_id = " + userLogado ;
+		String sql = "select * from model_login where useadmin is false and usuario_id = " + userLogado + " limit 5 ";
+		//SELECT * FROM model_login WHERE useradmin IS FALSE AND usuario_id = ? LIMIT 5
 		PreparedStatement statement = connection.prepareStatement(sql);
 		
 		ResultSet resultado = statement.executeQuery();

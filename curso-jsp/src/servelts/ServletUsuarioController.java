@@ -49,6 +49,7 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 			
 			
 			request.setAttribute("msg", "Excluido com sucesso!");
+			request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 		}
 		else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("deletarajax")) {
@@ -76,6 +77,7 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 			
 			request.setAttribute("msg", "Usuario em edição");
 			request.setAttribute("modelLogin", modelLogin);// linha para segurar os dados na tela
+			request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 
 			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 		
@@ -86,6 +88,7 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 			
 			request.setAttribute("msg", "Usuarios Carregados");
 			request.setAttribute("modelLogins", modelLogins);// linha para segurar os dados na tela
+			request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 
 			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 		
@@ -103,11 +106,28 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 				response.getOutputStream().write(new Base64().decodeBase64(modelLogin.getFotouser().split("\\,")[1]));
 			}
 		}
-
+		else if (acao != null && !acao.isEmpty() && acao.equalsIgnoreCase("paginar")) {
+			
+			
+			int offset = Integer.parseInt(request.getParameter("pagina"));
+			
+			
+			List<ModelLogin> modelLogins  = daoUsuarioRepository.consultaUsuarioListpaginada(this.getUserLogado(request), offset);
+			
+			System.out.println(modelLogins);
+			
+			request.setAttribute("modelLogins", modelLogins);// linha para segurar os dados na tela
+			
+			request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
+			
+			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
+			
+		}
 		else {
 			List<ModelLogin> modelLogins = daoUsuarioRepository.consultaUsuarioList(super.getUserLogado(request));// para mostrar todos os usuario abaixo da tela de edição de usuario
 			request.setAttribute("modelLogins", modelLogins);// linha para segurar os dados na tela
-			
+			request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
+
 			request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 		}
 		
@@ -195,6 +215,7 @@ public class ServletUsuarioController extends ServeltGenericUtil {
 		
 		request.setAttribute("msg", msg);
 		request.setAttribute("modelLogin", modelLogin);// linha para segurar os dados na tela
+		request.setAttribute("totalPagina", daoUsuarioRepository.totalPagina(this.getUserLogado(request)));
 
 		request.getRequestDispatcher("principal/usuario.jsp").forward(request, response);
 		
